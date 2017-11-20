@@ -8,13 +8,11 @@ HT1632_arduino::HT1632_arduino(void) {
 }
 
 void HT1632_arduino::init(void) {
-    DDRD |= B11110000;  // sets Arduino pins 4 to 7 as outputs
-    /*
-    pinMode(14, OUTPUT); // DATA
-    pinMode(12, OUTPUT); // CS
-    pinMode(13, OUTPUT); // WR
-    pinMode(15, OUTPUT); // CLK
-    */
+    //DDRD |= B11110000;  // sets Arduino pins 4 to 7 as outputs
+    pinMode(4, OUTPUT); // DATA
+    pinMode(5, OUTPUT); // CS
+    pinMode(6, OUTPUT); // WR
+    pinMode(7, OUTPUT); // CLK
 }
 
 void HT1632_arduino::begin(uint16 intensity) {
