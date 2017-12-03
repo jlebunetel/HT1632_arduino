@@ -33,7 +33,7 @@
 #define HT1632_CLK_1      PORTD |= B00010000
 #define HT1632_CLK_0      PORTD &= B11101111
 
-#elif defined(ARDUINO_AVR_MEGA2560 || ARDUINO_AVR_ADK)
+#elif defined(ARDUINO_AVR_MEGA2560) || defined(ARDUINO_AVR_ADK)
 
 // D7 = Blue = DATA
 #define HT1632_DATA_1     PORTH |= B00010000

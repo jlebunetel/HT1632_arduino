@@ -14,7 +14,7 @@ void HT1632_arduino::init(void) {
 
     DDRD |= B11110000; // sets Arduino pins 4 to 7 as outputs
 
-  #elif defined(ARDUINO_AVR_MEGA2560 || ARDUINO_AVR_ADK)
+  #elif defined(ARDUINO_AVR_MEGA2560) || defined(ARDUINO_AVR_ADK)
 
     pinMode(4, OUTPUT); // DATA
     pinMode(5, OUTPUT); // CS
