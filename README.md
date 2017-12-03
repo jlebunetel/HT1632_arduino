@@ -1,13 +1,13 @@
+# HT1632_arduino
+
 This is a C++ library to use a HT1632 LED matrix with an Arduino or a NodeMCU (ESP8266).
 
-Installation
---------------------------------------------------------------------------------
+## Installation
 
 To install this library, just place this entire folder as a subfolder in your
 Arduino/lib/targets/libraries folder.
 
-Notes
---------------------------------------------------------------------------------
+## Notes
 
 Tested with Arduino IDE 1.8.1
 
