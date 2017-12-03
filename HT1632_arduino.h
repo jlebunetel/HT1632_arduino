@@ -13,6 +13,27 @@
 #define CLK_DELAY; __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
 
+// select microcontroler
+#if defined(ARDUINO_AVR_UNO)
+
+// D7 = Blue = DATA
+#define HT1632_DATA_1     PORTD |= B10000000
+#define HT1632_DATA_0     PORTD &= B01111111
+#define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
+
+// D5 = Green = CS
+#define HT1632_CS_1       PORTD |= B00100000
+#define HT1632_CS_0       PORTD &= B11011111
+
+// D6 = Yellow = WR
+#define HT1632_WR_1       PORTD |= B01000000
+#define HT1632_WR_0       PORTD &= B10111111
+
+// D4 = Orange = CLK
+#define HT1632_CLK_1      PORTD |= B00010000
+#define HT1632_CLK_0      PORTD &= B11101111
+
+#elif defined(ARDUINO_AVR_MEGA2560 || ARDUINO_AVR_ADK)
 
 // D7 = Blue = DATA
 #define HT1632_DATA_1     PORTH |= B00010000
@@ -31,6 +52,7 @@
 #define HT1632_CLK_1      PORTG |= B00100000
 #define HT1632_CLK_0      PORTG &= B11011111
 
+#endif // select microcontroler
 
 
 //Following definition facilitates compilation of HT1632C control commands.
