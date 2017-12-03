@@ -5,51 +5,16 @@
 #define uint16 uint16_t
 
 // NO-OP Definition
-//#define CLK_DELAY; __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-//#define CLK_DELAY; __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
-//#define CLK_DELAY; delayMicroseconds(250);
 // The HT1632 requires a 1MHz clock.
 // On a 80MHz processor, __asm__("nop\n\t"); provides 12.5ns per NOP.
 // 40 times provides 500 ns -> half a period
-
-
-// The HT1632 requires a 1MHz clock.
 // On a 16MHz processor, __asm__("nop\n\t"); provides 62.5ns per NOP.
 // 8 times provides 500 ns -> half a period
 #define CLK_DELAY; __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
 
 
-
-/*
-// pin definition
-// D5 = GPIO14 = Blue = DATA
-#define HT1632_DATA_1     (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<14))
-#define HT1632_DATA_0     (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<14))
-#define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
-
-// D6 = GPIO12 = Green = CS
-#define HT1632_CS_1       (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<12))
-#define HT1632_CS_0       (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<12))
-
-// D7 = GPIO13 = Yellow = WR
-#define HT1632_WR_1       (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<13))
-#define HT1632_WR_0       (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<13))
-
-// D8 = GPIO15 = Orange = CLK
-#define HT1632_CLK_1      (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<15))
-#define HT1632_CLK_0      (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<15))
-*/
-
-// pin definition
-
-/*
-4 CLK  orange
-5 CS   vert
-6 WR   jaune
-7 DATA bleu
-*/
-
-
+// select microcontroler
+#if defined(ARDUINO_AVR_UNO)
 
 // D7 = Blue = DATA
 #define HT1632_DATA_1     PORTD |= B10000000
@@ -68,8 +33,26 @@
 #define HT1632_CLK_1      PORTD |= B00010000
 #define HT1632_CLK_0      PORTD &= B11101111
 
+#elif defined(ARDUINO_AVR_MEGA2560) || defined(ARDUINO_AVR_ADK)
 
+// D7 = Blue = DATA
+#define HT1632_DATA_1     PORTH |= B00010000
+#define HT1632_DATA_0     PORTH &= B11101111
+#define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
 
+// D5 = Green = CS
+#define HT1632_CS_1       PORTE |= B00001000
+#define HT1632_CS_0       PORTE &= B11110111
+
+// D6 = Yellow = WR
+#define HT1632_WR_1       PORTH |= B00001000
+#define HT1632_WR_0       PORTH &= B11110111
+
+// D4 = Orange = CLK
+#define HT1632_CLK_1      PORTG |= B00100000
+#define HT1632_CLK_0      PORTG &= B11011111
+
+#endif // select microcontroler
 
 
 //Following definition facilitates compilation of HT1632C control commands.
