@@ -1,56 +1,82 @@
 #ifndef HT1632_arduino_h
 #define HT1632_arduino_h
 
-#define uint8 uint8_t
-#define uint16 uint16_t
+#if not defined(ESP8266)
+  #define uint8 uint8_t
+  #define uint16 uint16_t
+#endif
 
 // NO-OP Definition
 // The HT1632 requires a 1MHz clock.
+// The HT1632 requires at least 50 ns between the change in data and the rising
+// edge of the WR signal.
 // On a 80MHz processor, __asm__("nop\n\t"); provides 12.5ns per NOP.
-// 40 times provides 500 ns -> half a period
 // On a 16MHz processor, __asm__("nop\n\t"); provides 62.5ns per NOP.
-// 8 times provides 500 ns -> half a period
-#define CLK_DELAY; __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+#if defined(ESP8266)
+  #define CLK_DELAY; __asm__("nop\n\t"); __asm__("nop\n\t"); __asm__("nop\n\t"); __asm__("nop\n\t"); __asm__("nop\n\t");
+#else
+  #define CLK_DELAY; __asm__("nop\n\t");
+#endif // defined(ESP8266)
 
+// pin definition
 
 // select microcontroler
 #if defined(ARDUINO_AVR_UNO)
 
-// D7 = Blue = DATA
-#define HT1632_DATA_1     PORTD |= B10000000
-#define HT1632_DATA_0     PORTD &= B01111111
-#define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
+  // D7 = Blue = DATA
+  #define HT1632_DATA_1     PORTD |= B10000000
+  #define HT1632_DATA_0     PORTD &= B01111111
+  #define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
 
-// D5 = Green = CS
-#define HT1632_CS_1       PORTD |= B00100000
-#define HT1632_CS_0       PORTD &= B11011111
+  // D5 = Green = CS
+  #define HT1632_CS_1       PORTD |= B00100000
+  #define HT1632_CS_0       PORTD &= B11011111
 
-// D6 = Yellow = WR
-#define HT1632_WR_1       PORTD |= B01000000
-#define HT1632_WR_0       PORTD &= B10111111
+  // D6 = Yellow = WR
+  #define HT1632_WR_1       PORTD |= B01000000
+  #define HT1632_WR_0       PORTD &= B10111111
 
-// D4 = Orange = CLK
-#define HT1632_CLK_1      PORTD |= B00010000
-#define HT1632_CLK_0      PORTD &= B11101111
+  // D4 = Orange = CLK
+  #define HT1632_CLK_1      PORTD |= B00010000
+  #define HT1632_CLK_0      PORTD &= B11101111
 
 #elif defined(ARDUINO_AVR_MEGA2560) || defined(ARDUINO_AVR_ADK)
 
-// D7 = Blue = DATA
-#define HT1632_DATA_1     PORTH |= B00010000
-#define HT1632_DATA_0     PORTH &= B11101111
-#define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
+  // D7 = Blue = DATA
+  #define HT1632_DATA_1     PORTH |= B00010000
+  #define HT1632_DATA_0     PORTH &= B11101111
+  #define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
 
-// D5 = Green = CS
-#define HT1632_CS_1       PORTE |= B00001000
-#define HT1632_CS_0       PORTE &= B11110111
+  // D5 = Green = CS
+  #define HT1632_CS_1       PORTE |= B00001000
+  #define HT1632_CS_0       PORTE &= B11110111
 
-// D6 = Yellow = WR
-#define HT1632_WR_1       PORTH |= B00001000
-#define HT1632_WR_0       PORTH &= B11110111
+  // D6 = Yellow = WR
+  #define HT1632_WR_1       PORTH |= B00001000
+  #define HT1632_WR_0       PORTH &= B11110111
 
-// D4 = Orange = CLK
-#define HT1632_CLK_1      PORTG |= B00100000
-#define HT1632_CLK_0      PORTG &= B11011111
+  // D4 = Orange = CLK
+  #define HT1632_CLK_1      PORTG |= B00100000
+  #define HT1632_CLK_0      PORTG &= B11011111
+
+#elif defined(ESP8266)
+
+  // D5 = GPIO14 = Blue = DATA
+  #define HT1632_DATA_1     (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<14))
+  #define HT1632_DATA_0     (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<14))
+  #define HT1632_DATA(x)    ((x)?HT1632_DATA_1:HT1632_DATA_0)
+
+  // D6 = GPIO12 = Green = CS
+  #define HT1632_CS_1       (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<12))
+  #define HT1632_CS_0       (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<12))
+
+  // D7 = GPIO13 = Yellow = WR
+  #define HT1632_WR_1       (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<13))
+  #define HT1632_WR_0       (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<13))
+
+  // D8 = GPIO15 = Orange = CLK
+  #define HT1632_CLK_1      (GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1<<15))
+  #define HT1632_CLK_0      (GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1<<15))
 
 #endif // select microcontroler
 
@@ -128,14 +154,11 @@ class HT1632_arduino {
     HT1632_arduino(void);
 
     void init();
+    void begin();
     void begin(uint16 intensity);
-    void selectAll();
-    void selectNone();
-    void commandWrite(uint16 command);
+    void setIntensity(uint16 intensity);
     void clear();
     void clearBuffer(uint8 *buffer);
-    void dataWrite(uint8 * buffer);
-    void dataWriteAddress(uint8 address, uint8 data);
     void greenVerticalLineOn(uint8 x);
     void greenVerticalLineOff(uint8 x);
     void redVerticalLineOn(uint8 x);
@@ -149,10 +172,15 @@ class HT1632_arduino {
     void scrollUpper(Screen * screen0, Screen * screen1, int duration, int direction);
     void scrollDown(Screen * screen0, Screen * screen1, int duration, int direction);
 
-
   private:
 //    uint8 buffer[BUFFER_LENGHT]; // utilisé pour le scroll
+    void selectAll();
+    void selectNone();
+    void commandWrite(uint16 command);
+    void dataWrite(uint8 * buffer);
+    void dataWriteAddress(uint8 address, uint8 data);
     Screen* temp; // utilisé pour le scroll
+    uint16 intensity = PWM_1;
 };
 
 #endif

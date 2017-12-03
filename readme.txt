@@ -1,4 +1,4 @@
-This is a C++ library to use a HT1632 LED matrix with an arduino
+This is a C++ library to use a HT1632 LED matrix with an Arduino or a NodeMCU (ESP8266).
 
 Installation
 --------------------------------------------------------------------------------
@@ -16,3 +16,4 @@ Supports the following microcontrollers :
  * Arduino/Genuino Uno
  * Arduino/Genuino Mega or Mega 2560
  * Arduino Mega ADK
+ * NodeMCU 1.0 (ESP-12E Module)

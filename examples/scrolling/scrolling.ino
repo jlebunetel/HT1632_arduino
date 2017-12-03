@@ -8,9 +8,7 @@ Screen* ecran1 = new Screen();
 Screen* ecran2 = new Screen();
 
 void setup() {
-  // put your setup code here, to run once:
   afficheur.begin(PWM_5);
-
 
   // on ajoute des images simples au buffers :
   // ecran0
@@ -51,15 +49,15 @@ void loop() {
   afficheur.display(ecran0);
   delay(3000);
 
-  afficheur.scroll(ecran0, ecran1, 128, LEFT);
+  afficheur.scroll(ecran0, ecran1, 512, LEFT);
 
   afficheur.display(ecran1);
   delay(3000);
 
-  afficheur.scroll(ecran1, ecran2, 128, LEFT);
+  afficheur.scroll(ecran1, ecran2, 512, LEFT);
 
   afficheur.display(ecran2);
   delay(3000);
 
-  afficheur.scroll(ecran2, ecran0, 128, LEFT);
+  afficheur.scroll(ecran2, ecran0, 512, LEFT);
 }
