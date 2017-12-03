@@ -21,11 +21,25 @@ void HT1632_arduino::init(void) {
     pinMode(6, OUTPUT); // WR
     pinMode(7, OUTPUT); // CLK
 
-  #endif // select microcontroler
+  #elif defined(ESP8266)
 
+    pinMode(14, OUTPUT); // DATA
+    pinMode(12, OUTPUT); // CS
+    pinMode(13, OUTPUT); // WR
+    pinMode(15, OUTPUT); // CLK
+
+  #endif // select microcontroler
 }
 
-void HT1632_arduino::begin(uint16 intensity) {
+void HT1632_arduino::setIntensity(uint16 intensity) {
+  // on met à jour la variable globale
+  this->intensity = intensity;
+
+  // puis on réinitialise l'afficheur
+  begin();
+}
+
+void HT1632_arduino::begin() {
   // initialisation de la matrice de led
   // apparement les broches OSC et SYNC des quatres HT1632 ne sont pas reliées dans cette matrice
   // on ne peut donc pas définir le premier HT1632 en MASTER et les suivants en SLAVE,
@@ -58,10 +72,11 @@ void HT1632_arduino::begin(uint16 intensity) {
   selectAll();
   commandWrite(LED_ON);
   selectNone();
+}
 
-  selectAll();
-  clear();
-  selectNone();
+void HT1632_arduino::begin(uint16 intensity) {
+  setIntensity(intensity);
+  // la fonction begin() est appelée par la fonction setIntensity()
 }
 
 void HT1632_arduino::selectAll() {
@@ -315,8 +330,6 @@ void HT1632_arduino::dataWriteAddress(uint8 address, uint8 data) {
   }
 }
 
-
-
 void HT1632_arduino::greenVerticalLineOn(uint8 x) {
   // active la ligne verticale x
 
@@ -382,7 +395,6 @@ void HT1632_arduino::greenVerticalLineOn(uint8 x) {
   CLK_DELAY;
   HT1632_CLK_0;
 }
-
 
 void HT1632_arduino::greenVerticalLineOff(uint8 x) {
   // active la ligne verticale x
@@ -450,8 +462,6 @@ void HT1632_arduino::greenVerticalLineOff(uint8 x) {
   HT1632_CLK_0;
 }
 
-
-
 void HT1632_arduino::redVerticalLineOn(uint8 x) {
   // active la ligne verticale x
 
@@ -517,7 +527,6 @@ void HT1632_arduino::redVerticalLineOn(uint8 x) {
   CLK_DELAY;
   HT1632_CLK_0;
 }
-
 
 void HT1632_arduino::redVerticalLineOff(uint8 x) {
   // active la ligne verticale x
@@ -585,10 +594,12 @@ void HT1632_arduino::redVerticalLineOff(uint8 x) {
   HT1632_CLK_0;
 }
 
-
-
-
 void HT1632_arduino::display(Screen * screen) {
+  // de temps en temps, un des quatre groupes de LEDs 16x8 s'éteint
+  // pour palier ce bug (en attendant de le résoudre !) on réinitialise
+  // l'afficheur avant chaque nouvel affichage
+  begin();
+
   // on active un a un les HT1632
 
   HT1632_CLK_0;  // clock line is 0
@@ -1065,7 +1076,6 @@ void HT1632_arduino::scrollDown(Screen * screen0, Screen * screen1, int duration
     break;
   }
 }
-
 
 Screen::Screen(void) {
   clear();

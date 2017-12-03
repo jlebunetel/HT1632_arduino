@@ -1,7 +1,9 @@
 #include <HT1632_arduino.h>
-HT1632_arduino afficheur;
-Screen* ecran0 = new Screen();
 
+// initialisation de l'afficheur
+HT1632_arduino afficheur;
+
+Screen* ecran0 = new Screen();
 
 void setup() {
   afficheur.begin(PWM_10);
@@ -11,6 +13,5 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  delay(1000000);
+  delay(1);
 }
