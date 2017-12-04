@@ -2,6 +2,12 @@
 
 This is a C++ library to use a HT1632 LED matrix with an Arduino or a NodeMCU (ESP8266).
 
+## Hardware
+
+Supports the following LED matrix displays :
+
+ * [Sure Electronics 32x16 RG Dual Color LED Dot Matrix Unit Board](http://store3.sure-electronics.com/de-dp14116)
+
 ## Installation
 
 To install this library, just place this entire folder as a subfolder in your
