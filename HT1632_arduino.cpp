@@ -31,12 +31,23 @@ void HT1632_arduino::init(void) {
   #endif // select microcontroler
 }
 
-void HT1632_arduino::setIntensity(uint16 intensity) {
-  // on met à jour la variable globale
-  this->intensity = intensity;
+void HT1632_arduino::setIntensity(uint8_t value) {
+  // value between 0 and 15
+  if (value > 15) {
+    value = 15;
+  }
 
-  // puis on réinitialise l'afficheur
-  begin();
+  // on met à jour la variable globale
+  intensity = (value << 1) | 0b100101000000;
+
+  // puis on envoie la commande à l'afficheur
+  noInterrupts();
+
+  selectAll();
+  commandWrite(intensity);
+  selectNone();
+
+  interrupts();
 }
 
 void HT1632_arduino::begin() {
@@ -44,6 +55,8 @@ void HT1632_arduino::begin() {
   // apparement les broches OSC et SYNC des quatres HT1632 ne sont pas reliées dans cette matrice
   // on ne peut donc pas définir le premier HT1632 en MASTER et les suivants en SLAVE,
   // tous doivent être déclarés en mode master et utiliser le résonnateur interne (commande RC)
+
+  noInterrupts();
 
   selectAll();                     // enable all HT1632s
   commandWrite(SYS_DIS);           // sends command
@@ -72,11 +85,16 @@ void HT1632_arduino::begin() {
   selectAll();
   commandWrite(LED_ON);
   selectNone();
+
+  interrupts();
 }
 
-void HT1632_arduino::begin(uint16 intensity) {
-  setIntensity(intensity);
-  // la fonction begin() est appelée par la fonction setIntensity()
+void HT1632_arduino::begin(uint8_t value) {
+  // on met à jour la variable globale
+  intensity = (value << 1) | 0b100101000000;
+
+  // puis on envoie intialise l'afficheur
+  begin();
 }
 
 void HT1632_arduino::selectAll() {
@@ -165,6 +183,8 @@ void HT1632_arduino::commandWrite(uint16 command) {
 }
 
 void HT1632_arduino::clear() {
+  noInterrupts();
+
   selectAll();
   // pour un HT1632, soit deux matrice 8x8 bicolores :
   // on selectionne la première adresse 0x00
@@ -213,6 +233,8 @@ void HT1632_arduino::clear() {
     }
   }
   selectNone();
+
+  interrupts();
 }
 
 void HT1632_arduino::clearBuffer(uint8 *buffer) {
@@ -331,6 +353,8 @@ void HT1632_arduino::dataWriteAddress(uint8 address, uint8 data) {
 }
 
 void HT1632_arduino::greenVerticalLineOn(uint8 x) {
+  noInterrupts();
+
   // active la ligne verticale x
 
   // on active un a un les HT1632
@@ -394,9 +418,13 @@ void HT1632_arduino::greenVerticalLineOn(uint8 x) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::greenVerticalLineOff(uint8 x) {
+  noInterrupts();
+
   // active la ligne verticale x
 
   // on active un a un les HT1632
@@ -460,9 +488,13 @@ void HT1632_arduino::greenVerticalLineOff(uint8 x) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::redVerticalLineOn(uint8 x) {
+  noInterrupts();
+
   // active la ligne verticale x
 
   // on active un a un les HT1632
@@ -526,9 +558,13 @@ void HT1632_arduino::redVerticalLineOn(uint8 x) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::redVerticalLineOff(uint8 x) {
+  noInterrupts();
+
   // active la ligne verticale x
 
   // on active un a un les HT1632
@@ -592,13 +628,16 @@ void HT1632_arduino::redVerticalLineOff(uint8 x) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::display(Screen * screen) {
   // de temps en temps, un des quatre groupes de LEDs 16x8 s'éteint
   // pour palier ce bug (en attendant de le résoudre !) on réinitialise
   // l'afficheur avant chaque nouvel affichage
-  begin();
+  //begin();
+  noInterrupts();
 
   // on active un a un les HT1632
 
@@ -652,9 +691,13 @@ void HT1632_arduino::display(Screen * screen) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::display(Screen * screen1, Screen * screen2) {
+  noInterrupts();
+
   // on active un a un les HT1632
 
   HT1632_CLK_0;  // clock line is 0
@@ -707,6 +750,8 @@ void HT1632_arduino::display(Screen * screen1, Screen * screen2) {
   HT1632_CLK_1;  // clock pulse n°5
   CLK_DELAY;
   HT1632_CLK_0;
+
+  interrupts();
 }
 
 void HT1632_arduino::shiftLeft(uint8 * buffer0, uint8 * buffer1, int offset) {

@@ -155,8 +155,8 @@ class HT1632_arduino {
 
     void init();
     void begin();
-    void begin(uint16 intensity);
-    void setIntensity(uint16 intensity);
+    void begin(uint8_t value);
+    void setIntensity(uint8_t value);
     void clear();
     void clearBuffer(uint8 *buffer);
     void greenVerticalLineOn(uint8 x);
@@ -180,7 +180,7 @@ class HT1632_arduino {
     void dataWrite(uint8 * buffer);
     void dataWriteAddress(uint8 address, uint8 data);
     Screen* temp; // utilisé pour le scroll
-    uint16 intensity = PWM_1;
+    uint16_t intensity = 0;
 };
 
 #endif
