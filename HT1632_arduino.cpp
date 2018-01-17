@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "HT1632_arduino.h"
 #include <font_5x7.h>
+#include <icons.h>
 
 HT1632_arduino::HT1632_arduino(void) {
   temp = new Screen();
@@ -1224,6 +1225,60 @@ void Screen::setChar(char c, uint8 x, uint8 y, uint8 color) {
     // indice du buffer ?
     int n = x + i  + driver_offset + y_offset;
     uint8 column = font_5x7[c - char_offset][i];
+    // LEDs vertes ?
+    if (color == GREEN || color == ORANGE) {
+      buffer[n] = column;
+    }
+    if (color == GREEN_INVERTED || color == ORANGE_INVERTED) {
+      buffer[n] = ~column;
+    }
+    // LEDs rouges ?
+    if (color == RED || color == ORANGE) {
+      buffer[n + 16] = column;
+    }
+    if (color == RED_INVERTED || color == ORANGE_INVERTED) {
+      buffer[n + 16] = ~column;
+    }
+  }
+}
+
+void Screen::setIcon(int index, uint8 x, uint8 y, uint8 color) {
+  // restrictions :
+  // 0 <= x < 32
+  // y=0 ou y=8 (pour le moment !)
+  // 1 <= color <= 6
+
+  int icon_width = 8;
+
+  // 0 <= x < 32
+  if (x < 0 || x >= 32) {
+    return;
+  }
+
+  // y=0 ou y=8 (pour le moment !)
+  int y_offset = 0;
+  if (y >= 8) {
+    y_offset = 64;
+  }
+
+  // 1 <= color <= 6
+  if (color < 1 || color > 6) {
+    return;
+  }
+
+  for (int i = 0 ; i < icon_width ; i++) {
+    // est-on dans la plage de l'afficheur ?
+    if (x + i < 0 || x + i >= 32) {
+      return;
+    }
+    // quel driver ?
+    int driver_offset = 0;
+    if (x + i >= 16) {
+      driver_offset = 16;
+    }
+    // indice du buffer ?
+    int n = x + i  + driver_offset + y_offset;
+    uint8 column = icons[index][i];
     // LEDs vertes ?
     if (color == GREEN || color == ORANGE) {
       buffer[n] = column;

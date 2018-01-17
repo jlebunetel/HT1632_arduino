@@ -1,6 +1,8 @@
 #ifndef HT1632_arduino_h
 #define HT1632_arduino_h
 
+#include <icons_names.h>
+
 #if not defined(ESP8266)
   #define uint8 uint8_t
   #define uint16 uint16_t
@@ -140,6 +142,7 @@ class Screen {
     void clear();
     void setPixel(uint8 x, uint8 y, uint8 color);
     void setChar(char c, uint8 x, uint8 y, uint8 color);
+    void setIcon(int index, uint8 x, uint8 y, uint8 color);
     void setString(String string, uint8 x, uint8 y, uint8 color);
     void setLine(String string, uint8 line, uint8 align, uint8 color);
 
