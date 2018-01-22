@@ -1224,7 +1224,7 @@ void Screen::setChar(char c, uint8 x, uint8 y, uint8 color) {
     }
     // indice du buffer ?
     int n = x + i  + driver_offset + y_offset;
-    uint8 column = font_5x7[c - char_offset][i];
+    uint8 column = pgm_read_byte(&(font_5x7[c - char_offset][i]));
     // LEDs vertes ?
     if (color == GREEN || color == ORANGE) {
       buffer[n] = column;
@@ -1278,7 +1278,7 @@ void Screen::setIcon(int index, uint8 x, uint8 y, uint8 color) {
     }
     // indice du buffer ?
     int n = x + i  + driver_offset + y_offset;
-    uint8 column = icons[index][i];
+    uint8 column = pgm_read_byte(&(icons[index][i]));
     // LEDs vertes ?
     if (color == GREEN || color == ORANGE) {
       buffer[n] = column;
