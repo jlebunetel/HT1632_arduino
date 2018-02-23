@@ -166,6 +166,7 @@ class HT1632_arduino {
     void greenVerticalLineOff(uint8 x);
     void redVerticalLineOn(uint8 x);
     void redVerticalLineOff(uint8 x);
+    void display();
     void display(Screen * screen);
     void display(Screen * screen1, Screen * screen2);
     void shiftLeft(uint8 * buffer0, uint8 * buffer1, int offset);

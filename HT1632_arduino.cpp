@@ -633,6 +633,10 @@ void HT1632_arduino::redVerticalLineOff(uint8 x) {
   interrupts();
 }
 
+void HT1632_arduino::display() {
+  display(temp);
+}
+
 void HT1632_arduino::display(Screen * screen) {
   // de temps en temps, un des quatre groupes de LEDs 16x8 s'éteint
   // pour palier ce bug (en attendant de le résoudre !) on réinitialise
